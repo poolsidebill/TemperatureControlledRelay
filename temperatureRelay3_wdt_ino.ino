@@ -1,12 +1,13 @@
 /**
  * temperatureRelay_wdt.ino
  * Bill Case 30Jun14
-  *
+ *     v2.0 17Jul15 - reset timerCount 
+ *
  * Sketch for activating a solid state relay based on the temperature limit
  * measured by a LM34, or for a timeframe starting with a pushbutton interrupt.
  * A status led will blink each time the WDT interrupt wakes the MCU.
  *
- * Binary sketch size: 1,994 bytes (of a 8,192 byte maximum)
+ * Binary sketch size: 2,026 bytes (of a 8,192 byte maximum)
  * MCU = ATTiny85
  * Solid State Relay = Crouzet M-OAC5AH
  * Temp sensor = LM34 (provides 10mV per degree Fahrenheit)
@@ -153,6 +154,7 @@ void checkTemp() {
     if ((temperActive) && outsideTemp <= 98.5) {
       digitalWrite(RELAYPIN, LOW);  // turn off relay
       temperActive = false;
+      timerCount = 0; //reset
     }
     else
       digitalWrite(RELAYPIN, LOW);  // turn off relay
@@ -199,6 +201,7 @@ ISR(WDT_vect)
 ISR(INT0_vect)
 {
   timerActive = true;
+  timerCount = 0; //reset time
   digitalWrite(RELAYPIN, HIGH); // turn on relay
   GIMSK = 0; //disable external interrupts (only need one to wake up)
 }
